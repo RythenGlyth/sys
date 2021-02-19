@@ -1,4 +1,4 @@
-package windows-readinput
+package windows
 
 // InputRecord is the data structure that ReadConsoleInput writes into.
 // All Documentation originally provided by Michael Niksa, et al. at Microsoft Corporation

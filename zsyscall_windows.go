@@ -1,4 +1,4 @@
-package windows-readinput
+package windows
 
 import (
 	"syscall"
