@@ -1,4 +1,4 @@
-module github.com/scrouthtv/windows
+module github.com/RythenGlyth/windows
 
 go 1.15
 
