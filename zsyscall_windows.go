@@ -32,7 +32,8 @@ func errnoErr(e syscall.Errno) error {
 }
 
 var (
-	modkernel32 = NewLazySystemDLL("kernel32.dll")
+	modkernel32 = windows.NewLazySystemDLL("kernel32.dll")
+	procReadConsoleW = modkernel32.NewProc("ReadConsoleW")
 	procReadConsoleInputW = modkernel32.NewProc("ReadConsoleInputW")
 )
 
@@ -42,7 +43,7 @@ var (
 // read should point to a uint32 where the number of characters actually read should be stored
 // inputControl should be set to NULL, as it currently has no effect
 // See: https://docs.microsoft.com/en-us/windows/console/readconsole
-func ReadConsole(console Handle, buf *uint16, toread uint32, read *uint32, inputControl *byte) (err error) {
+func ReadConsole(console windows.Handle, buf *uint16, toread uint32, read *uint32, inputControl *byte) (err error) {
 	r1, _, e1 := syscall.Syscall6(procReadConsoleW.Addr(), 5, uintptr(console), uintptr(unsafe.Pointer(buf)), uintptr(toread), uintptr(unsafe.Pointer(read)), uintptr(unsafe.Pointer(inputControl)), 0)
 	if r1 == 0 {
 		err = errnoErr(e1)
@@ -58,7 +59,7 @@ func ReadConsole(console Handle, buf *uint16, toread uint32, read *uint32, input
 //  - ReadConsole only reads character insertion (reads any character key pressed)
 //  - ReadConsoleInput reads any key (both key press and key release) as well as mouse, focus and window size change events
 // See: https://docs.microsoft.com/en-us/windows/console/readconsoleinput
-func ReadConsoleInput(console Handle, rec *InputRecord, toread uint32, read *uint32) (err error) {
+func ReadConsoleInput(console windows.Handle, rec *InputRecord, toread uint32, read *uint32) (err error) {
 	r1, _, e1 := syscall.Syscall6(procReadConsoleInputW.Addr(), 4,
 		uintptr(console), uintptr(unsafe.Pointer(rec)), uintptr(toread),
 		uintptr(unsafe.Pointer(read)), 0, 0)
